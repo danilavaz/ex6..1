@@ -1,3 +1,5 @@
+# אם אתה רואה את זה זאת הגרסה הנכונה
+
 import wave_helper
 import math
 from typing import *
