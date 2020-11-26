@@ -16,7 +16,7 @@ USER_MENU = 'Select one of the options:\n' \
             '5 Increase the volume\n' \
             '6 Decrease the volume \n' \
             '7 Low pass filter\n' \
-            '8 Go to the end menu'
+            '8 Go to the end menu\n'
 
 
 
@@ -24,7 +24,7 @@ def main():
     input_user = input('Select one of the three options:\n'
                        '1 to change the file\n'
                        '2 to compose a melody\n'
-                       '3 to finish')
+                       '3 to finish\n')
     if input_user == '1':
         action_flow()
 
@@ -54,7 +54,7 @@ def action_flow():
             audio_data = low_pass_filter(audio_data)
     wave_helper.save_wave(sample_rate, audio_data, filename)
 
-#jfoijdso
+
 def reverse_audio(audio_data):
     return list(reversed(audio_data))
 
@@ -122,4 +122,4 @@ def low_pass_filter(audio_data: List[List[int]]) -> List[List[int]]:
 
 
 if __name__ == '__main__':
-    print(negate_the_audio([[1,2], [2,3], [3,4], [4,5]]))
+    main()
