@@ -1,5 +1,12 @@
 import wave_helper
+import math
 from typing import *
+
+MAX_VOL = 32767
+MIN_VOL = -32768
+
+DEFAULT_SAMPLE_RATE = 2000
+
 OPTION_REVERSE = '1'
 OPTION_NAGATE = '2'
 OPTION_ACC = '3'
@@ -18,6 +25,30 @@ USER_MENU = 'Select one of the options:\n' \
             '7 Low pass filter\n' \
             '8 Go to the end menu\n'
 
+NOTES = {'A' : 440, 'B': 494, 'C': 523, 'D': 587, 'E': 659, 'F': 698, 'G': 784, 'Q': 0}
+
+
+def create_melody():
+    pass
+
+
+def get_samples_list_for_note(frequency, time): # note is a list with ["A",254]
+
+
+    # time is in 1/16 of a second units. 1 second = 2000 samples
+    num_of_samples = int(time/16 * DEFAULT_SAMPLE_RATE)
+
+    sample_list = []
+    for i in range(num_of_samples):
+        samples_per_cycle = DEFAULT_SAMPLE_RATE / frequency
+        sample_value = int(MAX_VOL* math.sin(math.pi*2*(i/samples_per_cycle)))
+        if sample_value > MAX_VOL:
+            sample_value = MAX_VOL
+        if sample_value < MIN_VOL:
+            sample_value = MIN_VOL
+        sample_list.append([sample_value]*2)
+
+    return sample_list
 
 
 def main():
@@ -27,6 +58,49 @@ def main():
                        '3 to finish\n')
     if input_user == '1':
         action_flow()
+    if input_user == '2':
+        melody_flow()
+
+
+def melody_flow():
+    filename = input("enter the melody file name")
+
+    with open(filename) as melody_file:
+        data = melody_file.read().replace(" ","").replace("\n","")
+
+    input_notes = convert_file_to_list(data) # turns the file data to a list of notes and times
+    audio_data = create_audio_data(input_notes) # creates a list of audio_data from a list of notes
+    wave_helper.save_wave(DEFAULT_SAMPLE_RATE, audio_data, "song54.wav")
+
+
+def create_audio_data(notes):
+    audio_data = []
+    for note in notes:
+        note_letter = note[0]
+        frequency = NOTES[note_letter]
+        time = note[1]
+        audio_data += get_samples_list_for_note(frequency, time)
+
+    return audio_data
+
+
+def convert_file_to_list(data):
+    notes = []
+    note = ""
+    time = ""
+    for index, char in enumerate(data):
+        if char in NOTES:
+            if note != "":
+                notes.append([note, int(time)])
+            note = char
+            time = ""
+        else:
+            time += char
+
+        if index == len(data) - 1:
+            notes.append([note, int(time)])
+    return notes
+
 
 def action_flow():
     filename = input('enter file name')
