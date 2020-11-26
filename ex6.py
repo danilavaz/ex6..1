@@ -18,11 +18,6 @@ USER_MENU = 'Select one of the options:\n' \
             '7 Low pass filter\n' \
             '8 Go to the end menu'
 
-#שדגשגדגשדשג
-#שדגשדגשדגדשג
-#שדגשגשדגשדג
-
-#שדגשדגדשג
 
 def main():
     input_user = input('Select one of the three options:\n'
