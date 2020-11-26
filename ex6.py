@@ -18,9 +18,6 @@ USER_MENU = 'Select one of the options:\n' \
             '7 Low pass filter\n' \
             '8 Go to the end menu'
 
-
-#daniel lavaz
-
 def main():
     input_user = input('Select one of the three options:\n'
                        '1 to change the file\n'
