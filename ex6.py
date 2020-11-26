@@ -1,3 +1,5 @@
+# אם אתה רואה את זה זאת הגרסה הנכונה
+
 import wave_helper
 import math
 from typing import *
@@ -15,6 +17,9 @@ OPTION_VOL_INC = '5'
 OPTION_VOL_DEC ='6'
 OPTION_LOW_PASS = '7'
 OPTION_END_MENU = '8'
+
+SPEED_MULTIPLY = 1.2
+
 USER_MENU = 'Select one of the options:\n' \
             '1 Reverse the audio\n' \
             '2 Negate the audio\n' \
@@ -39,9 +44,9 @@ def get_samples_list_for_note(frequency, time): # note is a list with ["A",254]
     num_of_samples = int(time/16 * DEFAULT_SAMPLE_RATE)
 
     sample_list = []
+    samples_per_cycle = DEFAULT_SAMPLE_RATE / frequency
     for i in range(num_of_samples):
-        samples_per_cycle = DEFAULT_SAMPLE_RATE / frequency
-        sample_value = int(MAX_VOL* math.sin(math.pi*2*(i/samples_per_cycle)))
+        sample_value = -1 * int(MAX_VOL* math.sin(math.pi*2*(i/samples_per_cycle)))
         if sample_value > MAX_VOL:
             sample_value = MAX_VOL
         if sample_value < MIN_VOL:
@@ -59,10 +64,12 @@ def main():
     if input_user == '1':
         action_flow()
     if input_user == '2':
-        melody_flow()
+        audio_data = melody_flow()
+        action_flow(audio_data)
 
 
 def melody_flow():
+
     filename = input("enter the melody file name")
 
     with open(filename) as melody_file:
@@ -70,7 +77,8 @@ def melody_flow():
 
     input_notes = convert_file_to_list(data) # turns the file data to a list of notes and times
     audio_data = create_audio_data(input_notes) # creates a list of audio_data from a list of notes
-    wave_helper.save_wave(DEFAULT_SAMPLE_RATE, audio_data, "song54.wav")
+
+    return audio_data
 
 
 def create_audio_data(notes):
@@ -102,13 +110,15 @@ def convert_file_to_list(data):
     return notes
 
 
-def action_flow():
-    filename = input('enter file name')
-    test_file = wave_helper.load_wave(filename)
-    while test_file == -1:
-        filename = input('The file is invalid enter file name')
+def action_flow(audio_data = None):
+    sample_rate = DEFAULT_SAMPLE_RATE
+    if audio_data == None:
+        filename = input('enter file name')
         test_file = wave_helper.load_wave(filename)
-    sample_rate, audio_data = wave_helper.load_wave(filename)
+        while test_file == -1:
+            filename = input('The file is invalid enter file name')
+            test_file = wave_helper.load_wave(filename)
+        sample_rate, audio_data = wave_helper.load_wave(filename)
     action_chosen = 0
     while action_chosen != OPTION_END_MENU:
         action_chosen = input(USER_MENU)
@@ -126,7 +136,9 @@ def action_flow():
             audio_data = decrease_the_volume(audio_data)
         if action_chosen == OPTION_LOW_PASS:
             audio_data = low_pass_filter(audio_data)
-    wave_helper.save_wave(sample_rate, audio_data, filename)
+
+    output_filename = input("How would you like to name the new file?")
+    wave_helper.save_wave(sample_rate, audio_data, output_filename)
 
 
 def reverse_audio(audio_data):
@@ -158,18 +170,18 @@ def speed_deceleration(audio_data):
 def increase_the_volume(audio_data):
     for i in range(len(audio_data)):
         for j in range(2):
-            if audio_data[i][j] * 1.2 <= 32767 and audio_data[i][j] * 1.2 >= -32768:
-                audio_data[i][j] = int(audio_data[i][j] * 1.2)
-            elif audio_data[i][j] * 1.2 > 32767:
-                audio_data[i][j] = 32767
+            if audio_data[i][j] * SPEED_MULTIPLY <= MAX_VOL and audio_data[i][j] * SPEED_MULTIPLY >= MIN_VOL:
+                audio_data[i][j] = int(audio_data[i][j] * SPEED_MULTIPLY)
+            elif audio_data[i][j] * SPEED_MULTIPLY > MAX_VOL:
+                audio_data[i][j] = MAX_VOL
             else:
-                audio_data[i][j] = -32768
+                audio_data[i][j] = MIN_VOL
     return audio_data
 
 def decrease_the_volume(audio_data):
     for i in range(len(audio_data)):
         for j in range(2):
-            audio_data[i][j] = int(audio_data[i][j] / 1.2)
+            audio_data[i][j] = int(audio_data[i][j] / SPEED_MULTIPLY)
     return audio_data
 
 def low_pass_filter(audio_data: List[List[int]]) -> List[List[int]]:
