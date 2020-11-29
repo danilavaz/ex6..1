@@ -46,7 +46,7 @@ def get_samples_list_for_note(frequency, time): # note is a list with ["A",254]
     sample_list = []
     samples_per_cycle = DEFAULT_SAMPLE_RATE / frequency
     for i in range(num_of_samples):
-        sample_value = -1 * int(MAX_VOL* math.sin(math.pi*2*(i/samples_per_cycle)))
+        sample_value = int(MAX_VOL* math.sin(math.pi*2*(i/samples_per_cycle)))
         if sample_value > MAX_VOL:
             sample_value = MAX_VOL
         if sample_value < MIN_VOL:
@@ -66,6 +66,8 @@ def main():
     if input_user == '2':
         audio_data = melody_flow()
         action_flow(audio_data)
+    if input_user == '3':
+        return
 
 
 def melody_flow():
@@ -138,7 +140,10 @@ def action_flow(audio_data = None):
             audio_data = low_pass_filter(audio_data)
 
     output_filename = input("How would you like to name the new file?")
+    while output_filename == -1:
+        output_filename = input("How would you like to name the new file?")
     wave_helper.save_wave(sample_rate, audio_data, output_filename)
+    main()
 
 
 def reverse_audio(audio_data):
