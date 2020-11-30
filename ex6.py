@@ -192,11 +192,10 @@ def action_flow(audio_data: Optional[AudioList] = None) \
     return sample_rate, audio_data
 
 
-def end_flow(sample_rate: int = DEFAULT_SAMPLE_RATE,
-             audio_data: AudioList = None):
+def save_audio(sample_rate: int = DEFAULT_SAMPLE_RATE,
+               audio_data: AudioList = None):
     """
-    the flow presented at the end of the program. will save the new audio file
-    if it has been changed
+    saves the audio data after the user decides to end the manipulations
     :param sample_rate: the sample rate of the file to be saved
     :param audio_data: the audio data to be saved
     """
@@ -206,8 +205,6 @@ def end_flow(sample_rate: int = DEFAULT_SAMPLE_RATE,
                 == -1:
             output_filename = input("Something went wrong, please enter a "
                                     "new filename")
-
-        print("Goodbye")
 
 
 def reverse_audio(audio_data: AudioList) -> AudioList:
@@ -328,16 +325,21 @@ def main():
     input
     """
     input_user = 0
-    while input_user != OPTION_EXIT:
+    while True:
         input_user = input(MAIN_MENU)
         sample_rate = DEFAULT_SAMPLE_RATE
         audio_data = None
+
+        if input_user == OPTION_EXIT:
+            break
+
         if input_user == OPTION_CHANGE:
             sample_rate, audio_data = action_flow()
         if input_user == OPTION_MELODY:
             audio_data = melody_flow()
             sample_rate, audio_data = action_flow(audio_data)
-        end_flow(sample_rate, audio_data)
+        save_audio(sample_rate, audio_data)
+
 
 
 if __name__ == '__main__':
