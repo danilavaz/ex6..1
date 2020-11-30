@@ -327,16 +327,17 @@ def main():
     the main function. will execute variuose flows according to the user's
     input
     """
-    input_user = input(MAIN_MENU)
-    sample_rate = DEFAULT_SAMPLE_RATE
-    audio_data = None
-    if input_user == OPTION_CHANGE:
-        sample_rate, audio_data = action_flow()
-    if input_user == OPTION_MELODY:
-        audio_data = melody_flow()
-        sample_rate, audio_data = action_flow(audio_data)
-
-    end_flow(sample_rate, audio_data)
+    input_user = 0
+    while input_user != OPTION_EXIT:
+        input_user = input(MAIN_MENU)
+        sample_rate = DEFAULT_SAMPLE_RATE
+        audio_data = None
+        if input_user == OPTION_CHANGE:
+            sample_rate, audio_data = action_flow()
+        if input_user == OPTION_MELODY:
+            audio_data = melody_flow()
+            sample_rate, audio_data = action_flow(audio_data)
+        end_flow(sample_rate, audio_data)
 
 
 if __name__ == '__main__':
