@@ -110,7 +110,7 @@ def create_audio_data(data: str) -> AudioList:
     return audio_data
 
 
-def convert_file_to_list(data: str) -> List[List[str, int]]:
+def convert_file_to_list(data: str) -> List[List[Union[str, int]]]:
     """
     Receives a string containing all the data of a melody and creates a list
     of notes and durations for further calculations
