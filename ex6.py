@@ -340,6 +340,8 @@ def main():
             sample_rate, audio_data = action_flow(audio_data)
         save_audio(sample_rate, audio_data)
 
+    print("Goodbye")
+
 
 
 if __name__ == '__main__':
