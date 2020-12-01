@@ -1,3 +1,10 @@
+#################################################################
+# FILE : wave_editor.py
+# EXERCISE : intro2cs1 ex6 2021
+# DESCRIPTION: A program that manipulates wave files and creates wave files
+# according to textual scripts
+#################################################################
+
 import wave_helper
 import math
 from typing import *
