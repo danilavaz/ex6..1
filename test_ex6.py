@@ -1,4 +1,4 @@
-from ex6 import *
+from wave_editor import *
 import math
 from wave_helper import load_wave
 
