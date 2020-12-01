@@ -1,6 +1,7 @@
 import wave_helper
 import math
 from typing import *
+import os
 
 MAX_VOL = 32767
 MIN_VOL = -32768
@@ -57,14 +58,15 @@ def get_samples_list_for_note(frequency : int, time : int) -> AudioList:
     duration
     """
     num_of_samples = int(time * TIME_UNITS * DEFAULT_SAMPLE_RATE)
-
     sample_list = []
-    samples_per_cycle = DEFAULT_SAMPLE_RATE / frequency
-    for i in range(num_of_samples):
-        sample_value = get_sample_value(i, samples_per_cycle)
-        handle_volume_bounds(sample_value)
-        sample_list.append([sample_value]*2)
-
+    if frequency == 0:
+        sample_list = [[0]*2 for _ in range(num_of_samples)]
+    else:
+        samples_per_cycle = DEFAULT_SAMPLE_RATE / frequency
+        for i in range(num_of_samples):
+            sample_value = get_sample_value(i, samples_per_cycle)
+            handle_volume_bounds(sample_value)
+            sample_list.append([sample_value]*2)
     return sample_list
 
 
@@ -84,7 +86,8 @@ def melody_flow():
     :return: the audio data of the melody for further actions
     """
     filename = input("enter the melody file name")
-
+    while not os.path.isfile(filename):
+        filename = input("Invalid file, enter a valid melody file name")
     with open(filename) as melody_file:
         data = melody_file.read().replace(" ","").replace("\n","")
 
