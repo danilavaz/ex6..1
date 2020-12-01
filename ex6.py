@@ -27,8 +27,8 @@ TIME_UNITS = 1/16
 
 MAIN_MENU = f'Select one of the three options:\n' \
             f'{OPTION_CHANGE} to change the file\n' \
-            f'{OPTION_MELODY} 2 to compose a melody\n' \
-            f'{OPTION_EXIT} 3 to finish\n'
+            f'{OPTION_MELODY} to compose a melody\n' \
+            f'{OPTION_EXIT} to finish\n'
 
 USER_MENU = f'Select one of the options:\n' \
             f'{OPTION_REVERSE} Reverse the audio\n' \
