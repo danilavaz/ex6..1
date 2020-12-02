@@ -32,7 +32,7 @@ VOL_MULTIPLY = 1.2
 
 TIME_UNITS = 1/16
 
-INVALID_FILE = "Invalid file. please enter a valid file name\n"
+INVALID_FILE = "Invalid file. please enter a valid file name"
 
 MAIN_MENU = f'Select one of the three options:\n' \
             f'{OPTION_CHANGE} to change the file\n' \
@@ -97,9 +97,6 @@ def melody_flow():
     filename = input("enter the melody file name\n")
     data = ""
     while data == "":
-        filename = input(INVALID_FILE)
-        if not os.path.isfile(filename):
-            continue
         with open(filename) as melody_file:
             data = melody_file.read().replace(" ", "").replace("\n", "")\
                 .replace("\t", "")
@@ -221,6 +218,7 @@ def save_audio(sample_rate: int = DEFAULT_SAMPLE_RATE,
                 == -1:
             output_filename = input(INVALID_FILE)
 
+
 def reverse_audio(audio_data: AudioList) -> AudioList:
     """
     returns a list representing a reversed audio part
@@ -291,7 +289,6 @@ def increase_the_volume(audio_data: AudioList) -> AudioList:
         for j in range(2):
             audio_data[i][j] = int(audio_data[i][j] * VOL_MULTIPLY)
             handle_volume_bounds(audio_data[i][j])
-
     return audio_data
 
 
@@ -360,4 +357,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+     main()
+    # print(increase_the_volume([[-32760, -100], [-55, -55], [0, 0], [4, -2017],
+    #                 [32767, 10002]]))
