@@ -32,6 +32,8 @@ VOL_MULTIPLY = 1.2
 
 TIME_UNITS = 1/16
 
+INVALID_FILE = "Invalid file. please enter a valid file name\n"
+
 MAIN_MENU = f'Select one of the three options:\n' \
             f'{OPTION_CHANGE} to change the file\n' \
             f'{OPTION_MELODY} to compose a melody\n' \
@@ -92,11 +94,15 @@ def melody_flow():
     The set of methods to be run once the user decides to create a new melody
     :return: the audio data of the melody for further actions
     """
-    filename = input("enter the melody file name")
-    while not os.path.isfile(filename):
-        filename = input("Invalid file, enter a valid melody file name")
-    with open(filename) as melody_file:
-        data = melody_file.read().replace(" ","").replace("\n","")
+    filename = input("enter the melody file name\n")
+    data = ""
+    while data == "":
+        filename = input(INVALID_FILE)
+        if not os.path.isfile(filename):
+            continue
+        with open(filename) as melody_file:
+            data = melody_file.read().replace(" ", "").replace("\n", "")\
+                .replace("\t", "")
 
     audio_data = create_audio_data(data)
     return audio_data
@@ -191,11 +197,11 @@ def action_flow(audio_data: Optional[AudioList] = None) \
     sample_rate = DEFAULT_SAMPLE_RATE
     if audio_data is None:
         filename = input('enter file name')
-        test_file = wave_helper.load_wave(filename)
-        while test_file == -1:
-            filename = input('The file is invalid enter a new file name')
-            test_file = wave_helper.load_wave(filename)
-        sample_rate, audio_data = wave_helper.load_wave(filename)
+        file = wave_helper.load_wave(filename)
+        while file == -1:
+            filename = input(INVALID_FILE)
+            file = wave_helper.load_wave(filename)
+        sample_rate, audio_data = file[0],file[1]
 
     audio_data = handle_action_choices(audio_data)
 
@@ -210,12 +216,10 @@ def save_audio(sample_rate: int = DEFAULT_SAMPLE_RATE,
     :param audio_data: the audio data to be saved
     """
     if audio_data:
-        output_filename = input("How would you like to name the new file?")
+        output_filename = input("How would you like to name the new file?\n")
         while wave_helper.save_wave(sample_rate, audio_data, output_filename) \
                 == -1:
-            output_filename = input("Something went wrong, please enter a "
-                                    "new filename")
-
+            output_filename = input(INVALID_FILE)
 
 def reverse_audio(audio_data: AudioList) -> AudioList:
     """
@@ -254,12 +258,14 @@ def speed_deceleration(audio_data: AudioList) -> AudioList:
     :param audio_data: the audio data to be decelerated
     :return: the decelerated audio data
     """
-    result = [audio_data[0]]
-    for i in range(1, len(audio_data)):
-        avg1 = int((audio_data[i][0] + audio_data[i - 1][0]) / 2)
-        avg2 = int((audio_data[i][1] + audio_data[i - 1][1]) / 2)
-        result.append([avg1, avg2])
+    result = []
+    for i in range(0, len(audio_data)-1):
         result.append(audio_data[i])
+        avg1 = int((audio_data[i][0] + audio_data[i + 1][0]) / 2)
+        avg2 = int((audio_data[i][1] + audio_data[i + 1][1]) / 2)
+        result.append([avg1, avg2])
+        if i == len(audio_data)-2:
+            result.append(audio_data[i+1])
     return result
 
 
@@ -313,7 +319,6 @@ def low_pass_filter(audio_data: AudioList) -> AudioList:
         count = 1
         sum1 = audio_data[i][0]
         sum2 = audio_data[i][1]
-
         if i < len(audio_data)-1:
             sum1 += audio_data[i+1][0]
             sum2 += audio_data[i+1][1]
@@ -321,7 +326,7 @@ def low_pass_filter(audio_data: AudioList) -> AudioList:
 
         if i > 0:
             sum1 += audio_data[i-1][0]
-            sum1 += audio_data[i-1][1]
+            sum2 += audio_data[i-1][1]
             count += 1
 
         pair = [int(sum1/count), int(sum2/count)]
