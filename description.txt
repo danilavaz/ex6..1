@@ -1,0 +1,42 @@
+wave_editor functionality description:
+
+We've written our code with a modular approach, writing multiple functions with a single purpose each for better understanding and readability
+of the code.
+
+We will split the explanation to two parts; sound manipulation flow and melody creation flow.
+At the beginning of the execution the main() function will be called and the main menu will be displayed to the user.
+The function will determin which flow should be executed according to the user's input.
+At the end of each flow, the user is asked for an output audio filename by which the new audio file will be saved.
+After that, the user will be brought back to the main menu and the main flow will run again and again until the user decides to exit the program
+
+Sound Manipulation Flow:
+If the user chooses option no. 1, the function action_flow() will be called.
+- action_flow() has two optional parameters, sample_rate: int and audio_data: AudioList which may contain the data of a melody
+created during the melody flow. If audio_data is None, the function will ask for the location of a sound file to manipulate
+- The function action_flow() presents a menu with all the sound manipulation options, awaits for 
+the user's input, and calls handle_action_choices() which calls the corresponding manipulation function (reverse_audio(), negate_the_audio(), ...)
+- Each of the seven functions receives a list of samples (with alias AudioList), performs a certain manipulation, 
+and returns an AudioList with the audio data after the manipulation
+- action_flow() runs a while loop which keeps asking the user for manipulation choices until the user chooses to
+end the process by choosing "8"
+
+Melody Flow:
+If the user chooses option no. 2, the function melody_flow() will be called.
+- At the beginning, the function asks the user for a file containing the notes and durations of the wanted melody.
+The function strips the content of the file by replacing all new lines and spaces with ""
+- After that the function calls a set of functions that together convert the content of the file to an AudioList
+The functions are:
+	1. create_audio_data(data: str) - receives the data from the melody file and calls the functions needed
+	2. convert_file_to_list(data: str) - run through the data from the file and adds each pair of notes and durations to a list which it returns at the end
+	* we use NOTES (a dictionary whose key/values are notes/frequencies) to convert each note in the returned list to a frequency value and call:
+	3. get_samples_list_for_note(frequency: int, time: int) - receives the frequency of a note and the duration it is played (in 1/16 seconds).
+		- The function calculates the number of samples that are needed for the note according to the sample rate and the duration
+		- The function creates the value of each sample by calling:
+		4. get_sample_value(i: int, samples_per_cycle: float) - calculates the value of the current sample according to the given formula
+		- The function adds the sample values it gets for each note to a list and returns it
+- Once the audio data is created, melody_flow() returns the AudioList and it is given as a parameter for action_flow() for further manipulations.
+
+
+* handle_volume_bounds(sample: int) - checks if the sample exceeds the min/max volume and changes it if so. This function is made to reduce repetetive coding
+* some functions contain a few amount of lines (such as get_sample_value()) or execute a single loop (such as handle_action_choices). 
+they were written for readability reasons.
