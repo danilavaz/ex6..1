@@ -195,13 +195,13 @@ def action_flow(audio_data: Optional[AudioList] = None) \
     can be saved in the end flow
     """
     sample_rate = DEFAULT_SAMPLE_RATE
-    if audio_data is None:
+    if audio_data == None:
         filename = input('enter file name')
-        file = wave_helper.load_wave(filename)
-        while file == -1:
+        test_file = wave_helper.load_wave(filename)
+        while test_file == -1:
             filename = input(INVALID_FILE)
-            file = wave_helper.load_wave(filename)
-        sample_rate, audio_data = file[0],file[1]
+            test_file = wave_helper.load_wave(filename)
+        sample_rate, audio_data = wave_helper.load_wave(filename)
 
     audio_data = handle_action_choices(audio_data)
 
